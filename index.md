@@ -9,6 +9,6 @@ Hey, I’m Harrison, a Professional Science Master’s student in Geospatial Dat
 
 Use the links below to explore:
 
-- [About Me](about.md)
-- [Projects](projects.md)
-- [Contact](contact.md)
+- [More about Me](about.md)
+- [Projects I've Worked on](projects.md)
+- [Contact information](contact.md)
