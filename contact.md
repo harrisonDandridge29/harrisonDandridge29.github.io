@@ -7,6 +7,8 @@ nav_order: 4
 
 You can reach me at:
 
-- 📧 yourname@gmail.com  
-- 🌐 [GitHub](https://github.com/yourusername)  
-- 📍 Based in Japan  
+- 📧 harrisondandridge@gmail.com
+- 🎓 wayles.dandridge@temple.edu
+- 🤝 [LinkedIn](https://www.linkedin.com/in/harrison-dandridge/)
+- 🌐 [GitHub](https://github.com/harrisonDandridge29)  
+- 📍 Based in the U.S.
