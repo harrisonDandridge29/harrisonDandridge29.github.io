@@ -18,6 +18,8 @@ nav:
     url: /about
   - title: "Projects"
     url: /projects
+  - title: "Web Mapping and GIS"
+    url: /WebMappingAndGIS
   - title: "Contact"
     url: /contact
 
