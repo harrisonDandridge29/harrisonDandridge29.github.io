@@ -8,4 +8,4 @@ Here are some assignments we've done in class so far:
 
 | Week | Assignment | Link |
 |------|---------------|--------------|
-| 2    | Deeper Cuts #1| |
+| 2    | Deeper Cuts #1| ____________|
