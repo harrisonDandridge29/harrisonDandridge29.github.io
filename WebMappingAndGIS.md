@@ -7,6 +7,9 @@ nav_order: 5
 
 Here are some assignments we've done in class so far:
 
-| Week | Assignment | Link |
+## Course Assignments
+
+| Week | Original Map | Deeper Cut|
 |------|---------------|--------------|
-| 2    | Deeper Cuts #1|[Map of Roanoke](DeeperCuts/Deep_cut_1.html)|
+| 2    |[Three US Cities](map/first_map.html) |[Map of Roanoke](DeeperCuts/Deep_cut_1.html)|
+|3|[Two PA Cities](map/Dandridge_pa_cities.html)|[]()|
