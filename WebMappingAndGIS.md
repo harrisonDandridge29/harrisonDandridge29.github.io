@@ -9,4 +9,4 @@ Here are some assignments we've done in class so far:
 
 | Week | Assignment | Link |
 |------|---------------|--------------|
-| 2    | Deeper Cuts #1|[Map of Roanoke](maps/dandridge_deep_map.html)|
+| 2    | Deeper Cuts #1|[Map of Roanoke](DeeperCuts/Deep_cut_1.html)|
