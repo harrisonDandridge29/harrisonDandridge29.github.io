@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head> 
+    
+
+    <meta charset=utf-8 />
+    <title>Deeper Cut #2</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+  integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+  crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+  integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+  crossorigin=""></script>
+
+    
+
+
+    <style>
+        
+         body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        h4 {
+    color: #FF0000;
+    font-weight: bolder;
+        }
+
+        h5{
+            color: #0b1127;
+            font-weight: bold;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+    </style>
+    
+    
+
+</head>
+
+<body>
+    <header>
+        <h1>East Coast Cities and Their Distance from Philly</h1>
+
+        
+    </header>
+
+     <div id="map"></div> 
+    
+    
+
+    <footer>
+        <p>x</p>
+    </footer>
+
+    
+    <script>
+
+       var mymap = L.map('map',  { 
+          center: [38.8732, -76.8867],
+          zoom: 6
+      });
+        
+       var mapLink = 
+            '<a href="http://openstreetmap.org">OpenStreetMap</a>'; 
+       var tiles =     L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; ' + mapLink + ' Contributors',
+            maxZoom: 7,
+            })
+        tiles.addTo(mymap);  
+
+     var d = new Date()
+     var hour = d.getHours()
+     var minutes = d.getMinutes()
+     var hour_form = hour < 10 ? '0' + hour : hour;
+     var minutes_form = minutes < 10 ? '0' + minutes : minutes;
+     var currentTime = hour_form + ':' + minutes_form;
+     console.log(hour);
+     
+     let timeOfDay = "";
+
+if (hour >= 5 && hour < 12) {
+    timeOfDay = 'Good morning!';
+} else if (hour >= 12 && hour < 17) {
+    timeOfDay = 'Good afternoon!';
+} else if (hour >= 17 && hour < 21) {
+    timeOfDay = 'Good evening!';
+} else {
+    timeOfDay = 'Goodnight!';
+}
+
+
+       console.log(timeOfDay);
+        
+        
+     var boston = {
+    name: 'Boston',
+    latlng: [42.3601, -71.0589],
+    phillyDistance: 300
+}
+
+
+ var boston_icon = L.icon({
+         iconUrl: 'https://www.freepnglogos.com/uploads/boston-red-sox-logo-png/b-logo-boston-red-sox-png-download-png-25.png',
+         iconSize: [75, 60],
+     })
+     
+     var boston_mark = L.marker(boston.latlng, {icon: boston_icon}).addTo(mymap);
+     boston_mark.bindPopup('<h4>In ' + boston.name + ', which is ' + boston.phillyDistance + ' miles away from Philadelphia, it is ' + currentTime + " o'clock. "+ timeOfDay); 
+      
+        
+     var charles = {
+    name: 'Charleston',
+    latlng: [38.3498, -81.6326],
+    phillyDistance: 420}
+     
+     var charles_mark = L.marker(charles.latlng).addTo(mymap);
+     charles_mark.bindPopup('<h5>In ' + charles.name + ', which is ' + charles.phillyDistance + ' miles away from Philadelphia, it is ' + currentTime + " o'clock. " + timeOfDay); 
+     
+    var raleigh = {
+    name: 'Raleigh',
+    latlng: [35.7796, -78.6382],
+    phillyDistance: 400
+}
+
+        
+     var raleigh_mark = L.marker(raleigh.latlng).addTo(mymap);
+     raleigh_mark.bindPopup('<h5>In ' + raleigh.name + ', which is ' + raleigh.phillyDistance + ' miles away from Philadelphia, it is ' + currentTime + " o'clock. "+ timeOfDay); 
+     
+     
+           
+        
+     do {
+     var citySelect = prompt("Please type in \'B\' to learn more Boston, \'C\' to learn more about Charleston, or \'R\' to learn more about Raleigh.")
+     
+     if (citySelect === "B") {
+        boston_mark.openPopup(); 
+     }
+     else if (citySelect === "R")  {
+        raleigh_mark.openPopup();
+     } 
+     else if (citySelect === "C") {
+        charles_mark.openPopup();  
+     }       
+         
+     } while (citySelect != "B" && citySelect != "R" && citySelect != "C");     
+        
+    </script>
+    
+</body>
+
+</html>
