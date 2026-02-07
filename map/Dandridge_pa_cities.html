@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PA Cities Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+/*I USED THE FOLLOWING PROMPT FOR Q: please develop a leaflet map of PA cities 
+Harrisburg and Lancaster that features circlemarkers - please include everything 
+I need to run the program. Just return me a copy of the code I need*/
+
+        //The following two pieces of code create variables that store
+        var Harrisburg = {
+            name: 'Harrisburg',
+            lat: 40.2732,
+            lng: -76.8867,
+            population: 50649
+        };
+        //Population estimations are taken from data commons website
+        var Lancaster = {
+            name: 'Lancaster',
+            lat: 40.0379,
+            lng: -76.3055,
+            population: 58441
+        };
+        
+        const map = L.map('map').setView([40.2, -76.5], 9);
+        
+       var Basemap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
+});
+Basemap.addTo(map);
+        
+        //L.circle creates a circle overlay with a radius in meters, whereas circlemarker is measured in pixels, hence the difference in radius value. [This appears in leaflet documentation under circle for vector layer].
+        L.circle([Harrisburg.lat, Harrisburg.lng], {
+            radius: 5000,
+            color: '#D4AF37',
+            fillColor: 'blue',
+            fillOpacity: 0.7
+        }).bindTooltip("<b>" + 'Name: ' + "</b>" + "<i>" + Harrisburg.name + "</i>" + "<br>" + "<b>" + 'Population: ' + "</b>" + "<i>" + Harrisburg.population + "</i>").addTo(map);
+        
+        //.bindTooltip is similar to a popup, but displays information when hovering instead of when clicking. [This appears in leaflet documentation under Tooltip for UI Layers].
+        L.circle([Lancaster.lat, Lancaster.lng], {
+            radius: 5000,
+            color: 'red', //This color option sets the stroke color of the circle, whereas the below fillColor sets the fill of the circle. [This appears in leaflet documentation under Path Options for Vector Layers]
+            fillColor: 'blue',
+            fillOpacity: 0.7
+        }).bindTooltip("<b>" + 'Name: ' + "</b>" + "<i>" + Lancaster.name + "</i>" + "<br>" + "<b>" + 'Population: ' + "</b>" + "<i>" + Lancaster.population + "</i>").addTo(map);
+    </script>
+</body>
+</html>
