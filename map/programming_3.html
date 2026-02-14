@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Leaflet Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+</head>
+
+<body>
+
+    <div id="map" style="width: 600px; height: 400px; margin: 0 auto;"></div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="PPR_Program_Sites.geojson"></script>
+
+  <script>
+/*Prompt used: Create map code for a leaflet map that uses a geojson as the data as a stored 
+variable 'pp' to create circle markers and a filter, include html code. 
+*/
+
+
+
+    var map = L.map('map').setView([39.99, -75.16], 10.5);
+
+    /*tileLayer This section of code calls the mapbox api as the basemap for the web map, 
+    specifying the type of basemap using id argument and using the accessToken placeholder 
+    to include my access token. [This appears in the TileLayer section under Raster Layers].
+    */
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a>',
+  maxZoom: 18,
+  id: 'mapbox/light-v11',
+  tileSize: 512,
+  zoomOffset: -1,
+  accessToken: 'pk.eyJ1IjoiaGFycmlzb25kYW5kMjkiLCJhIjoiY21sbGw3N2J5MDlxczNscHg1bmJrZTZqaSJ9.BL5KzPoZHJEevyqlugBukA'
+}).addTo(map);
+
+/*This code calls the GeoJson file from opendataPhilly that stored in the variable pp. 
+pointtolayer converts each point in the file to a circlemarker, as specified in the return section
+of the code. [This appears in the GeoJson section under Other Layers]*/
+    L.geoJson(pp, {
+      pointToLayer: function(feature, latlng) {
+        return L.circleMarker(latlng, {
+          radius: 5,
+          color: 'green',
+          fillColor: 'green',
+          fillOpacity: 0.6
+        });
+      },
+      /*The following filter allows us to only call specific features given a criteria. This 
+      one only includes one playground, but you can filter for other things too. [This appears 
+      in leaflet documentation under filter in options of GeoJson]
+      */
+     filter: function(feature) {
+  return feature.properties.park_name === 'Frank Glavin Playground';
+}
+    }).addTo(map);
+
+  </script>
+
+</body>
+</html>
