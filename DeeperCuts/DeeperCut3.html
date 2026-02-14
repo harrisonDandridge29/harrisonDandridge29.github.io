@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset=utf-8 />
+    <title>Deeper Cut 3</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+  integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+  crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+  integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+  crossorigin=""></script>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        button {
+            font-size: 1.2em;
+            margin-left: 10%;
+            padding: 10px 20px;
+            background-color: #041c30;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #003d5c;
+        }
+        /* Additional style rules go here! */
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>East Coast Population Density</h1>
+        <h2>Comparing Urban Density in Three Southeast Port Cities</h2>
+    </header>
+
+    <div id='map'></div>
+    <button id='map-cities'>Map Cities</button>
+    <footer>
+        <p>Click the "Map Cities" button and select your preferred unit (Miles or Km) to view population density for Charleston, Wilmington, and Savannah.</p>
+        <p>Map authored by Harrison Dandridge</p>
+    </footer>
+
+<script>
+    
+    // map options
+    var options = {
+            center: [33.0986, -79.9183],
+            zoom: 6
+    }
+    
+    var map = L.map('map', options);
+        
+var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+})
+
+;
+    map.addLayer(tiles);
+   
+var Charleston = {
+    coord: [32.7765, -79.9311],
+    population: 150227,
+    area: 127.5
+};
+
+var Wilmington = {
+    coord: [34.2257, -77.9447],
+    population: 115451,
+    area: 51.9
+};
+
+var Savannah = {
+    coord: [32.0809, -81.0912],
+    population: 147780,
+    area: 108.7
+};
+
+ 
+var button = document.getElementById("map-cities"); //Create button called map cities. references above in header along with div tag and styled as well...
+    
+    button.addEventListener("click", function() {
+        
+        do {
+            var units = prompt('Enter the units for calculating density', 'Enter "Miles" or "Km"');
+        } while (units != "Miles" && units != "Km");
+        
+        mapCities(units);
+        
+   }); // Adds behavior to button and stores with a variable - what will happen when the user clicks the button. It will keep on spitting the same message until they type km or miles 
+    
+   function mapCities(units) { 
+    
+       // A density variable for each city representes a caller which sends down three pieces of information - units that was passed in through the MapCities caller and the pop and area from the objects you created above
+    var wDensity = CalcPopDensity(Wilmington.population, Wilmington.area, units)
+        
+    var cDensity = CalcPopDensity(Charleston.population, Charleston.area, units)
+    
+    var sDensity = CalcPopDensity(Savannah.population, Savannah.area, units)
+       
+       // Two Variables for each city. One for the popup - one for the marker (see above)
+    var wPopup = "<b>" + "Wilmington, North Carolina" + "</b><br>" +
+               "<b>Density</b>: " + wDensity.toFixed(2) + " people per square " + units;
+            var wMarker =
+                L.marker(Wilmington.coord)
+               .addTo(map)
+               .bindPopup(wPopup)
+            
+    var cPopup = "<b>" + "Charleston, South Carolina" + "</b><br>" +
+               "<b>Density</b>: " + cDensity.toFixed(2) + " people per square " + units;
+            var cMarker =
+                L.marker(Charleston.coord)
+               .addTo(map)
+               .bindPopup(cPopup)
+
+    var sPopup = "<b>" + "Savannah, Georgia" + "</b><br>" +
+               "<b>Density</b>: " + sDensity.toFixed(2) + " people per square " + units;
+            var sMarker =
+                L.marker(Savannah.coord)
+               .addTo(map)
+               .bindPopup(sPopup)
+            }
+            
+// You will create the function signature for CalcPopDensity down here outside of the curly for MapCities
+       
+         function CalcPopDensity(pop, area, units) {
+    if (units == "Miles") {
+         var density = pop / area     
+    }
+      else if (units == "Km") {
+        var density = pop / (area * 2.58999)
+      }
+      return density;
+    }
+</script>
+    
+</body>
+
+</html>
+
