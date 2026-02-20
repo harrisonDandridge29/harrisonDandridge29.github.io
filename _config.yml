@@ -1,6 +1,6 @@
 title: Harrison Dandridge
 description: Portfolio and Projects
-remote_theme: pages-themes/midnight
+remote_theme: pages-themes/slate
 
 # Enable GitHub Pages plugin
 plugins:
@@ -24,6 +24,4 @@ nav:
     url: /contact
 
 # Optional extras
-color_scheme: dark
-logo: /assets/logo.png
 search_enabled: true
