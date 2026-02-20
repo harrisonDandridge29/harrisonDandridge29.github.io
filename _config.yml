@@ -24,6 +24,6 @@ nav:
     url: /contact
 
 # Optional extras
-color_scheme: light
+color_scheme: dark
 logo: /assets/logo.png
 search_enabled: true
