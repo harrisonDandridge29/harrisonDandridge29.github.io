@@ -12,4 +12,4 @@ Use the links below to explore:
 - [More about Me](about.md)
 - [Projects I've Worked on](projects.md)
 - [Contact information](contact.md)
-# - [Web Mapping and GIS](WebMappingAndGIS.md) commented out for porftolio use
+<!-- [Web Mapping and GIS](WebMappingAndGIS.md) commented out for porftolio use -->
