@@ -7,7 +7,7 @@ nav_order: 3
 
 Here are some of my favorite works:
 
-| Year | Project | Description |
-|------|----------|--------------|
-| 2024 | Tokyo Mapping Studio | A collection of urban spatial stories |
-| 2023 | Cities in Motion | An interactive Leaflet map series |
+| Year | Project |
+|------|----------|
+|2025|[Environmental Degradation and Health Disparities in Central Appalachia- The Legacy of Surface Coal Mining](Projects/Environmental Degradation and Health Disparities in Central Appalachia- The Legacy of Surface Coal Mining.pdf)|
+|2024|[Modeling Sea Level Rise and Wetland Migration Potential: Proactive Land-Use Planning for the Pamlico Sound](Projects/Dandridge_Final_PDF.pdf)|
