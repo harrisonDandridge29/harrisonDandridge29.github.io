@@ -5,7 +5,7 @@ nav_order: 3
 
 # Projects
 
-Here are some of my favorite works:
+Here are some of the favorite research projects that I have completed:
 
 | Year | Project |
 |------|----------|
