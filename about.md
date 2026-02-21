@@ -5,7 +5,7 @@ nav_order: 2
 
 # About Me
 
-I’m a geographer and educator passionate about mapping, cities, and design.
+I am a graduate student with a BA in Geography and Urban Studies from Temple University, currently enrolled in Temple University's Master's program in Geospatial Data Science.
 
-- **Current role:** Professor of Urban Spatial Design in Japan  
-- **Interests:** Web mapping, spatial analysis, and creative geography 
+- **Current role:** Student-Athlete at Temple University on the Men's Soccer Team
+- **Interests:** GIS, Web mapping, Environmental Analysis, Data Analytics
