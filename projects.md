@@ -26,4 +26,5 @@ Here are some of the favorite research projects that I have completed:
 |2025|[Devil's Marbleyard via Gunther Ridge and Belfast Trail Reference Map](Projects/maps/Dandridge_Lab8_Revised_Nobuild.pdf)|Created as an individual project for the course *Fundamentals of Cartography*, this map acts as a reference map to a popular rock scrambling site in southwest Virginia: Devil's Marbleyard. It is designed to help visitors orient themselves within the area, particularly by showing how to access the site and navigate the popular trail leading to the Marbleyard.|
 
 
+
 [*Back to Start*](index.md)
