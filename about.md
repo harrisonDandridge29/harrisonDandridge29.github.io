@@ -12,3 +12,8 @@ I am a graduate student with a BA in Geography and Urban Studies from Temple Uni
 - **Current role:** Student-Athlete at Temple University on the Men's Soccer Team
 - **Experience:** Environmental Data Intern at Paces | GIS Intern with the City of Roanoke
 - **Interests:** GIS, Web mapping, Environmental Analysis, Data Analytics
+
+
+
+
+[**Back to Start**](index.md)
