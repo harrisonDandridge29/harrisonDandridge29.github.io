@@ -9,5 +9,5 @@ Here are some of my favorite works:
 
 | Year | Project |
 |------|----------|
-|2025| [Environmental Degradation and Health Disparities in Central Appalachia- The Legacy of Surface Coal Mining](Projects/Environmental Degrad_Coal.pdf)|
-|2024|[Modeling Sea Level Rise and Wetland Migration Potential: Proactive Land-Use Planning for the Pamlico Sound](Projects/Dandridge_Final_PDF.pdf)|
+|2025|[Environmental Degradation and Health Disparities in Central Appalachia- The Legacy of Surface Coal Mining](Projects/Environmental_Degrad_Coal.pdf)|
+|2025|[Modeling Sea Level Rise and Wetland Migration Potential: Proactive Land-Use Planning for the Pamlico Sound](Projects/Dandridge_Final_PDF.pdf)|
