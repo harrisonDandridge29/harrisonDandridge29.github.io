@@ -18,8 +18,8 @@ nav:
     url: /about
   - title: "Projects"
     url: /projects
-  - title: "Web Mapping and GIS"
-    url: /WebMappingAndGIS
+  #- title: "Web Mapping and GIS" COMMENTED OUT FOR GENERAL PORTFOLIO USE
+  # url: /WebMappingAndGIS COMMENTED OUT FOR GENERAL PORTFOLIO USE
   - title: "Contact"
     url: /contact
 
