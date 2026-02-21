@@ -24,3 +24,6 @@ Here are some of the favorite research projects that I have completed:
 |------|---------|---------|
 |2025|[Chelsea FC Total Travel Distance for 2024-2025 Season](Projects/maps/Dandridge_Map_Final.pdf)|Created as a final project for the course *Fundamentals of Cartography*, this map quantifies the total distance traveled by European giants Chelsea Football Club in the 2024-2025 season across all competitions. Symbolized by competition, the objective of this map was to better understand how distance traveled was distributed across different competitions.|
 |2025|[Devil's Marbleyard via Gunther Ridge and Belfast Trail Reference Map](Projects/maps/Dandridge_Lab8_Revised_Nobuild.pdf)|Created as an individual project for the course *Fundamentals of Cartography*, this map acts as a reference map to a popular rock scrambling site in southwest Virginia: Devil's Marbleyard. It is designed to help visitors orient themselves within the area, particularly by showing how to access the site and navigate the popular trail leading to the Marbleyard.|
+
+
+[*Back to Start*](index.md)
