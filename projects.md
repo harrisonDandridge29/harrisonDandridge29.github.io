@@ -5,8 +5,6 @@ nav_order: 3
 
 # Projects
 **Indiviual Research**
-Here are some of the favorite research projects that I have completed:
-
 | Year | Project | Details |
 |------|----------|--------|
 |2025|[Environmental Degradation and Health Disparities in Central Appalachia- The Legacy of Surface Coal Mining](Projects/Environmental_Degrad_Coal.pdf)|Research project conducted in Spring 2025 for: *Research Design in Environmental Studies*|
