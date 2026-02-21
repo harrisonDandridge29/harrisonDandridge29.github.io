@@ -7,7 +7,6 @@ nav_order: 2
 
 I am a graduate student with a BA in Geography and Urban Studies from Temple University, currently enrolled in Temple University's Master's program in Geospatial Data Science.
 
-[![My Resume](https://img.shields.io/badge/Resume-Download-blue?style=for-the-badge)](Projects/Dandridge_Resume_2026.pdf){:width="200px"}
 <a href="Projects/Dandridge_Resume_2026.pdf"><img src="https://img.shields.io/badge/Resume-Download-blue?style=for-the-badge" height ="50"></a>
 
 - **Current role:** Student-Athlete at Temple University on the Men's Soccer Team
