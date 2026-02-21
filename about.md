@@ -16,4 +16,4 @@ I am a graduate student with a BA in Geography and Urban Studies from Temple Uni
 
 
 
-[**Back to Start**](index.md)
+[*Back to Start*](index.md)
