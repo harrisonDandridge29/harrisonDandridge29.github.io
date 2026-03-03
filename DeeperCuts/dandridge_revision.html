@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Mapping Alternative Energy Sources</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        .filter-control {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .filter-control:hover {
+            background: #f4f4f4;
+        }
+        .legend {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    line-height: 20px;
+    font-size: 12px;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.principle-explanation {
+    font-size: 0.75em;
+    font-style: oblique;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>US Electric Power Generation</h1>
+        <h2>Biomass, Geothermal, and Solar Sources</h2>
+    </header>
+
+    <div id='map'></div>
+
+   <footer>
+    <p>Map created by Harrison Dandridge</p>
+    <p>This map displays alternative energy power plants across the US. Symbol size represents generation capacity in megawatts (MW).</p>
+    
+    <div class="principle-explanation">
+        <p><strong>Design Principle Used:</strong> Incorporating shapes to de-clutter the map</p>
+        <p><strong>What Changes Were Made:</strong> Distinct shapes were assigned to each energy source—circles for Biomass, triangles for Geothermal, and squares for Solar. Additionally, I implemented an interactive filter that allows users to toggle the visibility of smaller plants (under 50 MW), reducing visual clutter at the national scale.</p>
+        <p><strong>Why This Map is Better:</strong> By using varied shapes instead of identical circles, users can better distinguish between energy types without relying solely on color, which improves accessibility and intuitiveness. The filter control gives users the ability to focus on major power plants when the full dataset feels overwhelming, creating a cleaner, more insightful viewing experience that adapts to different audience needs.</p>
+    </div>
+</footer>
+
+
+    <script src="power-plants.js"></script>
+    <script>
+
+      var map = L.map('map', {
+          center: [39,-96],
+          zoom: 4,
+      });
+      
+      var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+      });  
+      
+      tiles.addTo(map);
+        
+         
+var showSmallPlants = true;
+
+function getRadius(area){
+    var radius = Math.sqrt(area/Math.PI);
+    return radius * .6;   
+}
+
+var biomassOptions = {
+    pointToLayer: function(feature,latlng) {
+        return L.circleMarker(latlng, {
+           color: '#ff6600',
+           weight: 2,
+           fillColor: '#ff6600',
+           fillOpacity: .6,
+           radius: getRadius(feature.properties.capacity_mw)
+        });   
+    },
+    filter: function(feature){
+        if (showSmallPlants) {
+            return feature.properties.fuel_source['Biomass'];
+        } else {
+            return feature.properties.fuel_source['Biomass'] && feature.properties.capacity_mw >= 50;
+        }
+    },
+    onEachFeature: function(feature,layer) {
+        layer.bindPopup("<b>"+feature.properties.plant_name+"</b><br>"+feature.properties.capacity_mw.toLocaleString()+" MW");
+        layer.on('mouseover', function() {
+            layer.setStyle({fillColor: 'red'});
+            layer.bindTooltip(feature.properties.plant_name).openTooltip();
+        });
+        layer.on('mouseout', function() {
+            layer.setStyle({fillColor: '#ff6600'});
+        });
+    }
+};
+
+var geothermalOptions = {
+    pointToLayer: function(feature,latlng) {
+        var size = getRadius(feature.properties.capacity_mw) * 2;
+        return L.marker(latlng, {
+            icon: L.divIcon({
+                className: 'triangle-marker',
+                html: '<div style="width:0; height:0; border-left:' + size/2 + 'px solid transparent; border-right:' + size/2 + 'px solid transparent; border-bottom:' + size + 'px solid #cc00cc; opacity:0.8;"></div>',
+                iconSize: [size, size]
+            })
+        });   
+    },
+    filter: function(feature){
+        if (showSmallPlants) {
+            return feature.properties.fuel_source['Geothermal'];
+        } else {
+            return feature.properties.fuel_source['Geothermal'] && feature.properties.capacity_mw >= 50;
+        }
+    },
+    onEachFeature: function(feature,layer) {
+        layer.bindPopup("<b>"+feature.properties.plant_name+"</b><br>"+feature.properties.capacity_mw.toLocaleString()+" MW");
+        layer.on('mouseover', function() {
+            layer.bindTooltip(feature.properties.plant_name).openTooltip();
+        });
+    }
+};
+
+var solarOptions = {
+    pointToLayer: function(feature,latlng) {
+        var size = getRadius(feature.properties.capacity_mw) * 2;
+        return L.marker(latlng, {
+            icon: L.divIcon({
+                className: 'square-marker',
+                html: '<div style="width:' + size + 'px; height:' + size + 'px; background-color:#ffcc00; opacity:0.7;"></div>',
+                iconSize: [size, size]
+            })
+        });   
+    },
+    filter: function(feature){
+        if (showSmallPlants) {
+            return feature.properties.fuel_source['Solar'];
+        } else {
+            return feature.properties.fuel_source['Solar'] && feature.properties.capacity_mw >= 50;
+        }
+    },
+    onEachFeature: function(feature,layer) {
+        layer.bindPopup("<b>"+feature.properties.plant_name+"</b><br>"+feature.properties.capacity_mw.toLocaleString()+" MW");
+        layer.on('mouseover', function() {
+            layer.bindTooltip(feature.properties.plant_name).openTooltip();
+        });
+    }
+};
+
+var biomassLayer = L.geoJson(plants, biomassOptions);
+var geothermalLayer = L.geoJson(plants, geothermalOptions);
+var solarLayer = L.geoJson(plants, solarOptions);
+
+var layerControl;
+
+function refreshLayers() {
+    var biomassVisible = map.hasLayer(biomassLayer);
+    var geothermalVisible = map.hasLayer(geothermalLayer);
+    var solarVisible = map.hasLayer(solarLayer);
+    
+    map.removeLayer(biomassLayer);
+    map.removeLayer(geothermalLayer);
+    map.removeLayer(solarLayer);
+    map.removeControl(layerControl);
+    
+    biomassLayer = L.geoJson(plants, biomassOptions);
+    geothermalLayer = L.geoJson(plants, geothermalOptions);
+    solarLayer = L.geoJson(plants, solarOptions);
+    
+    if (biomassVisible) biomassLayer.addTo(map);
+    if (geothermalVisible) geothermalLayer.addTo(map);
+    if (solarVisible) solarLayer.addTo(map);
+    
+    var sourcesLayers = {
+        "<span style='color: #ff6600'>● Biomass</span>": biomassLayer,
+        "<span style='color: #cc00cc'>▲ Geothermal</span>": geothermalLayer,
+        "<span style='color: #ffcc00'>■ Solar</span>": solarLayer
+    };
+    layerControl = L.control.layers(null, sourcesLayers, {collapsed: false}).addTo(map);
+}
+
+var FilterControl = L.Control.extend({
+    onAdd: function(map) {
+        var container = L.DomUtil.create('div', 'filter-control leaflet-bar');
+        var checkbox = L.DomUtil.create('input', '', container);
+        checkbox.type = 'checkbox';
+        checkbox.id = 'smallPlantToggle';
+        checkbox.checked = true;
+        
+        var label = L.DomUtil.create('label', '', container);
+        label.htmlFor = 'smallPlantToggle';
+        label.innerHTML = ' Show plants < 50 MW';
+        
+        L.DomEvent.on(checkbox, 'change', function(e) {
+            L.DomEvent.stopPropagation(e);
+            showSmallPlants = checkbox.checked;
+            refreshLayers();
+        });
+        
+        L.DomEvent.disableClickPropagation(container);
+        
+        return container;
+    }
+});
+
+map.addControl(new FilterControl({ position: 'topright' }));
+
+var sourcesLayers = {
+    "<span style='color: #ff6600'>● Biomass</span>": biomassLayer,
+    "<span style='color: #cc00cc'>▲ Geothermal</span>": geothermalLayer,
+    "<span style='color: #ffcc00'>■ Solar</span>": solarLayer
+};
+
+layerControl = L.control.layers(null, sourcesLayers, {collapsed: false}).addTo(map);
+
+biomassLayer.addTo(map);
+geothermalLayer.addTo(map);
+solarLayer.addTo(map);
+
+var legend = L.control({position: 'bottomleft'});
+
+legend.onAdd = function(map) {
+    var div = L.DomUtil.create('div', 'legend');
+    div.innerHTML = '<strong>Energy Sources</strong><br>' +
+        '<span style="color:#ff6600; font-size:18px; display:inline-block; width:20px; text-align:center;">●</span> Biomass<br>' +
+        '<span style="color:#cc00cc; font-size:18px; display:inline-block; width:20px; text-align:center;">▲</span> Geothermal<br>' +
+        '<span style="color:#ffcc00; font-size:18px; display:inline-block; width:20px; text-align:center;">■</span> Solar<br>' +
+        '<br><strong>Size = Capacity (MW)</strong>';
+    return div;
+};
+
+legend.addTo(map);
+
+
+    </script>
+    
+</body>
+
+</html>
