@@ -16,3 +16,4 @@ Here are some assignments we've done in class so far:
 |4|[Philly Parks and Rec Program](map/programming_3.html)|[Population Density of Major Southeastern Ports](DeeperCuts/Deep_cut_3.html)|
 |5|[US Electric Power Generation](DeeperCuts/dand_prog_5.html)|
 |6|[US Electric Power Generation: Revised](DeeperCuts/dand_prog_6.html)|
+|8|[Breakfast Spending Habits in U.S. by County](DeeperCuts/dand_prog_7.html)|
