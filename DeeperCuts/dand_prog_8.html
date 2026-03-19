@@ -1,0 +1,161 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Earthquakes in Iceland since 1935 | ArcGIS Maps SDK for JavaScript 4.28</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/dark/main.css" />
+    <script src="https://js.arcgis.com/4.28/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      .esri-legend {
+  max-width: 183px;
+}
+
+    </style>
+
+    <script>
+      require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend"], (
+        Map,
+        MapView,
+        FeatureLayer,
+        Legend
+      ) => {
+        const defaultSym = {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          color: [0, 0, 0, 0],
+          outline: {
+            // autocasts as new SimpleLineSymbol()
+            color: "#EE4B2B",
+            width: 1
+          }
+        };
+
+        /*****************************************************************
+         * Set a size visual variable on the renderer. Size visual variables
+         * create continuous ramps that map low data values to small icons
+         * and high data values to large icons. Features
+         * with data values in between the min and max data values are assigned
+         * a size proportionally between the min and max sizes specified in
+         * `minSize` and `maxSize` or `stops`.
+         *****************************************************************/
+
+        const renderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: defaultSym,
+          visualVariables: [
+            {
+              type: "size",
+              field: "Magnitude",
+    
+              legendOptions: {
+                title: "Magnitude"
+              },
+              stops: [ //stops calculated on arcgis map viewer on web, used natural breaks.
+                {
+                  value: 2,
+                  size: 4,
+                  label: "2"
+                },
+                {
+                  value: 3.5,
+                  size: 8,
+                  label: "3.5"
+                },
+                {
+                  value: 4.1,
+                  size: 12,
+                  label: "4.1"
+                },
+                {
+                  value: 4.5,
+                  size: 16,
+                  label: "4.5"
+                },
+                {
+                  value: 5.1,
+                  size: 20,
+                  label: "5.1"
+                },
+                {
+                  value: 7.1,
+                  size: 28,
+                  label: "7.1"
+                }
+              ]
+            }
+          ]
+        };
+
+        const povLayer = new FeatureLayer({
+          url:
+            "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/Iceland_Earthquakes/FeatureServer/0",
+          renderer: renderer,
+          title: "Earthquakes",
+          popupTemplate: {
+            // autocasts as new PopupTemplate()
+            title: "Earthquake Date: {expression/date-only}<br> Earthquake Time: {expression/time-only}",
+            content: "This <b>{Magnitude}</b> magnitude earthquake hit Iceland on <b>{DateTime}</b> at a depth of <b>{Depth} kilometers</b>.",
+            expressionInfos: [ //not a ton of location data in this dataset (other than lat/long), so title is date and time. Symbol proportional to magnitude.
+              {
+                name: "date-only",
+                expression: "Left($feature.DateTime, 10)"
+                },
+                {
+                  name: "time-only",
+                  expression: "Right($feature.DateTime, 11)"
+                }
+              ],
+            fieldInfos: [
+              {
+                fieldName: "Magnitude",
+                format: {
+                  digitSeparator: true,
+                  places: 0
+                }
+              },
+            ]
+          }
+        });
+
+        const map = new Map({
+          basemap: "dark-gray-vector",
+          layers: [povLayer]
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-19, 65],
+          zoom: 5
+        });
+
+        /******************************************************************
+         *
+         * Add layers to layerInfos on the legend
+         *
+         ******************************************************************/
+
+        view.ui.add(
+          new Legend({
+            view: view
+          }),
+          "bottom-right"
+        );
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
