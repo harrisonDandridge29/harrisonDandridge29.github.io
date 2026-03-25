@@ -1,0 +1,82 @@
+<!--
+
+To run this demo, you need to replace 'YOUR_API_KEY' with an API key from the ArcGIS Developers dashboard.
+
+Sign up for a free account and get an API key.
+
+https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
+
+-->
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Mapping Art Galleries in NYC with ArcGIS SDK for JavaScript</title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.28/"></script>
+
+  <script>
+  require([
+    "esri/config",
+    "esri/Map",
+    "esri/views/MapView",
+
+    "esri/layers/FeatureLayer"
+
+  ], function(esriConfig, Map, MapView, FeatureLayer) {
+
+  esriConfig.apiKey = "AAPTan1It6qP-5diqR3td1RkcfA..T5SM2BglxGwpopc-NjvMgxCjX4vAtY30yU-SS_AD9UBGwntRmtANVg-VJ1tKs4KvabBVt87Wxhu6cKxOkPYPuEKRoj8ST_xcJE0aPqaw-uHzmsibZzjL8JBP72hq_y3lmwuH0fobsKkr2WgcZ4L-DDXUPtp8THrU78FoWDJHViXPNQrRGSyIiam5FPjkQ2vc5-sMAJ634_Z6xvdcYkPmS5fYpw1fyJrb_tZ1JFgky6MsO89ZNFDRms0B96zZHvdtoBRxuw..AT1_NTa40gn7";
+
+  const map = new Map({
+    basemap: "arcgis-streets-night"
+  });
+
+  const view = new MapView({
+    container: "viewDiv",
+    map: map,
+    center: [-73.9990, 40.7428],
+    zoom: 10
+  });
+
+
+const popupGalleries = {
+  "title": "Art Gallery: {name}",
+  "content": "<b>Name:</b> {name}<br><b>City:</b> {city}<br><b> Phone Number:</b> {tel}"
+}
+
+const galleries = new FeatureLayer({
+  url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/Art_Galleries_NewYork/FeatureServer",
+  outFields: ["name","city","tel"],
+  popupTemplate: popupGalleries,
+  renderer: {
+    type: "simple",
+    symbol: {
+      type: "simple-marker",
+      color: [34,139,34,0.7],
+      size: 9,
+      outline: {
+        color: [255,255,255],
+        width: 1
+      }
+    }
+  }
+});
+
+map.add(galleries);
+  });
+</script>
+
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>
