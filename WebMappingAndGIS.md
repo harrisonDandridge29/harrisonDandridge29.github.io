@@ -19,3 +19,4 @@ Here are some assignments we've done in class so far:
 |7|[Art Galleries in New York](DeeperCuts/dand_prog_6.html)|
 |8|[Breakfast Spending Habits in U.S. by County](DeeperCuts/dand_prog_7.html)|
 |9|[Earthquakes in Iceland since 1935](DeeperCuts/dand_prog_8.html)|
+|10|[Exploring Google Charts with Soccer Data](map/chart_combine.html)|
