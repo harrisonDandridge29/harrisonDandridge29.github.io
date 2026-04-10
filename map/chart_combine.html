@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {
+        'packages': ['geochart', 'timeline']
+      });
+      google.charts.setOnLoadCallback(drawCharts);
+
+      function drawCharts() {
+        drawGeoChart();
+        drawTimeline();
+      }
+
+      function drawGeoChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Country');
+        data.addColumn('number', 'Soccer Rating');
+        data.addColumn({type: 'string', role: 'tooltip'});
+        data.addRows([
+          ['Brazil', 10, 'South America - Rating: 10'],
+          ['Argentina', 10, 'South America - Rating: 10'],
+          ['Uruguay', 7, 'South America - Rating: 7'],
+          ['Colombia', 7, 'South America - Rating: 7'],
+          ['Chile', 5, 'South America - Rating: 5'],
+          ['Ecuador', 6, 'South America - Rating: 6'],
+          ['Peru', 4, 'South America - Rating: 4'],
+          ['Venezuela', 4, 'South America - Rating: 4'],
+          ['Bolivia', 2, 'South America - Rating: 2'],
+          ['Paraguay', 5, 'South America - Rating: 5'],
+          ['Guyana', 1, 'South America - Rating: 1'],
+          ['Suriname', 1, 'South America - Rating: 1'],
+          ['Mexico', 6, 'Central America - Rating: 6'],
+          ['Guatemala', 3, 'Central America - Rating: 3'],
+          ['Belize', 1, 'Central America - Rating: 1'],
+          ['Honduras', 3, 'Central America - Rating: 3'],
+          ['El Salvador', 3, 'Central America - Rating: 3'],
+          ['Nicaragua', 2, 'Central America - Rating: 2'],
+          ['Costa Rica', 4, 'Central America - Rating: 4'],
+          ['Panama', 2, 'Central America - Rating: 2'],
+          ['United States', 7, 'North America - Rating: 7'],
+          ['Canada', 5, 'North America - Rating: 5'],
+          ['Cuba', 3, 'Caribbean - Rating: 3'],
+          ['Jamaica', 4, 'Caribbean - Rating: 4'],
+          ['Haiti', 2, 'Caribbean - Rating: 2'],
+          ['Dominican Republic', 3, 'Caribbean - Rating: 3']
+        ]);
+
+        var options = {
+          region: '019',
+          colorAxis: { colors: ['#fff9c4', '#e65100'] }
+        };
+
+        var chart = new google.visualization.GeoChart(document.getElementById('geo_div'));
+        chart.draw(data, options);
+      }
+
+      function drawTimeline() {
+        var container = document.getElementById('timeline_div');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Player' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        dataTable.addRows([
+          ['Luis Figo',         new Date(2000, 0, 1), new Date(2001, 0, 1)],
+          ['Michael Owen',      new Date(2001, 0, 1), new Date(2002, 0, 1)],
+          ['Ronaldo',           new Date(2002, 0, 1), new Date(2003, 0, 1)],
+          ['Zinedine Zidane',   new Date(2003, 0, 1), new Date(2004, 0, 1)],
+          ['Andriy Shevchenko', new Date(2004, 0, 1), new Date(2005, 0, 1)],
+          ['Ronaldinho',        new Date(2005, 0, 1), new Date(2006, 0, 1)],
+          ['Fabio Cannavaro',   new Date(2006, 0, 1), new Date(2007, 0, 1)],
+          ['Kaka',              new Date(2007, 0, 1), new Date(2008, 0, 1)],
+          ['Cristiano Ronaldo', new Date(2008, 0, 1), new Date(2009, 0, 1)],
+          ['Lionel Messi',      new Date(2009, 0, 1), new Date(2013, 0, 1)],
+          ['Cristiano Ronaldo', new Date(2013, 0, 1), new Date(2015, 0, 1)],
+          ['Lionel Messi',      new Date(2015, 0, 1), new Date(2016, 0, 1)],
+          ['Cristiano Ronaldo', new Date(2016, 0, 1), new Date(2018, 0, 1)],
+          ['Luka Modric',       new Date(2018, 0, 1), new Date(2019, 0, 1)],
+          ['Lionel Messi',      new Date(2019, 0, 1), new Date(2020, 0, 1)],
+          ['Lionel Messi',      new Date(2021, 0, 1), new Date(2022, 0, 1)],
+          ['Karim Benzema',     new Date(2022, 0, 1), new Date(2023, 0, 1)],
+          ['Lionel Messi',      new Date(2023, 0, 1), new Date(2024, 0, 1)],
+          ['Rodri',             new Date(2024, 0, 1), new Date(2025, 0, 1)],
+          ['Ousmane Dembele',   new Date(2025, 0, 1), new Date(2026, 0, 1)]
+        ]);
+
+        chart.draw(dataTable);
+      }
+    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f9f9f9;
+      }
+      .chart-section {
+        margin-bottom: 40px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      h2 {
+        text-align: center;
+        margin: 0 0 4px 0;
+      }
+      h4, h6 {
+        text-align: center;
+        margin: 4px 0;
+        color: #555;
+        font-weight: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Soccer Data Visualizations</h1>
+
+    <div class="chart-section">
+      <h2>Soccer Ratings - Americas</h2>
+      <h4>Personal ratings (1-10) for countries across North, Central, and South America</h4>
+      <div id="geo_div" style="width: 750px; height: 500px; margin: auto;"></div>
+    </div>
+
+    <div class="chart-section">
+      <h2>Ballon d'Or Winners (2000-2025)</h2>
+      <h4>Award given to the best soccer player each year</h4>
+      <h6>*Award not given in 2020 due to COVID-19</h6>
+      <div id="timeline_div" style="width: 100%; height: 600px;"></div>
+    </div>
+  </body>
+</html>
