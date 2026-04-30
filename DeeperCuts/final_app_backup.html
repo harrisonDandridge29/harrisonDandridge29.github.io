@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Ocean & Atmospheric Dynamics | Final Project</title>
+    <script type="module" src="https://js.arcgis.com/5.0/"></script>
+    
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      /* Splash Screen Styles */
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1B203B 0%, #2E3761 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        color: white;
+        text-align: center;
+      }
+
+      #splash-screen h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      }
+
+      #splash-screen p {
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      .choice-buttons {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .choice-btn {
+        padding: 1.5rem 2rem;
+        font-size: 1.1rem;
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.3);
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .choice-btn:hover {
+        background: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.6);
+        transform: translateY(-2px);
+      }
+
+      /* Navigation Bar */
+      #nav-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: rgba(0,0,0,0.8);
+        display: none;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 999;
+        backdrop-filter: blur(10px);
+      }
+
+      #nav-bar h2 {
+        color: white;
+        margin: 0;
+        flex-grow: 1;
+      }
+
+      #mode-switch {
+        color: white;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      arcgis-map {
+     display: block;
+      height: 100%;
+      width: 100%;
+     }
+
+      #mode-switch:hover {
+        background: rgba(255,255,255,0.2);
+      }
+
+      /* Map Container */
+      #map-container {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+      }
+
+      #controls {
+        width: 300px;
+        max-height: 80vh;
+        overflow: auto;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body class="calcite-mode-dark">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+      <h1>Climate Data using Flow Renderer</h1>
+      <p>Explore real environmental data through interactive flow visualizations. Choose a dataset below to begin. Once loaded, use the slider menu in the top right to adjust flow density, line width, speed, and glow effect. Use the search bar to find any location.</p>
+      
+      <div class="choice-buttons">
+        <button class="choice-btn" onclick="startMode('wind')" title = "Wind data: global average wind speeds and direction, monthly averages from 2005-2024">
+          <strong>Global Wind Patterns</strong><br>
+          Monthly averages from 2005-2024
+        </button>
+        <button class="choice-btn" onclick="startMode('ocean')" title="Ocean data: global surface current flow and sea surface temperature from unknown snapshot date">
+          <strong>Ocean Currents + Temperature</strong><br>
+          Surface  ocean currents with thermal data
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div id="nav-bar">
+      <h2 id="current-mode-title">Ocean & Atmospheric Dynamics</h2>
+      <button id="mode-switch" onclick="showSplash()">Switch Mode</button>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map-container">
+      <arcgis-map center="-30, 20" zoom="2">
+        <arcgis-search slot="top-right"></arcgis-search>
+        <arcgis-zoom slot="top-left"></arcgis-zoom>
+        <arcgis-fullscreen slot="top-left"></arcgis-fullscreen>
+        <arcgis-expand slot="top-left" expanded>
+          <arcgis-legend></arcgis-legend>
+        </arcgis-expand>
+        <arcgis-expand slot="top-right" expand-icon="sliders-horizontal">
+          <calcite-card id="controls" class="calcite-mode-dark">
+            <div slot="heading" id="controls-heading">Controls</div>
+            <!-- Controls will be populated based on mode -->
+            <div id="controls-content"></div>
+          </calcite-card>
+        </arcgis-expand>
+      </arcgis-map>
+    </div>
+
+    <script type="module">
+      // --- State variables ---
+      // Track which mode is active, the current map object, and the arcgis-map web component
+      let currentMode = null;
+      let currentMap = null;
+      let viewElement = null;
+      const DEFAULT_CENTER = [-30, 20]; // Atlantic-centered default view
+      const DEFAULT_ZOOM = 2;
+
+      // --- startMode ---
+      // Called when user clicks a button on the splash screen.
+      // Guards against re-initializing the same mode, shows the map UI,
+      // resets the map extent, then hands off to the correct init function.
+      async function startMode(mode) {
+        if (currentMode === mode) return; // don't re-init if already in this mode
+        currentMode = mode;
+
+        // Hide splash, show map
+        document.getElementById('splash-screen').style.display = 'none';
+        document.getElementById('nav-bar').style.display = 'flex';
+        document.getElementById('map-container').style.display = 'block';
+
+        // Update the nav bar title to reflect the active mode
+        const title = mode === 'wind' ? 'Global Wind Patterns' : 'Ocean Currents + Temperature';
+        document.getElementById('current-mode-title').textContent = title;
+
+        // Reset the map extent back to the default global view on every mode switch
+        viewElement = document.querySelector('arcgis-map');
+        if (viewElement && viewElement.view) {
+          try {
+            // animate:false avoids an error when the view isn't fully rendered yet
+            await viewElement.view.goTo({ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM }, { animate: false });
+          } catch (e) { /* view not ready, skip */ }
+        }
+
+        if (mode === 'wind') {
+          await initWindMode();
+        } else {
+          await initOceanMode();
+        }
+      }
+
+      // --- initWindMode ---
+      // Dynamically imports only the modules needed for wind mode.
+      // Creates an ImageryTileLayer pointed at a global wind speed service,
+      // applies a flow renderer with a viridis-style color ramp to show wind magnitude,
+      // and adds a bloom glow effect.
+      // Reuses the existing map object if one already exists (avoids re-creating the view).
+      async function initWindMode() {
+        const [Map, ImageryTileLayer] = await $arcgis.import([
+          "@arcgis/core/Map.js",
+          "@arcgis/core/layers/ImageryTileLayer.js",
+        ]);
+
+        const windLayer = new ImageryTileLayer({
+          url: "https://tiledimageservices.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Global_Average_Wind_Speeds_Month_Altitude/ImageServer",
+          title: "Average Winds",
+          renderer: {
+            type: "flow",         // flow renderer animates vector data as moving lines
+            trailWidth: "1px",
+            density: .2,          // how many flow lines are drawn (0-1)
+            flowSpeed: 5,         // animation speed of the lines
+            visualVariables: [{
+              type: "color",
+              field: "Magnitude", // color the lines by wind speed magnitude
+              stops: [
+                // viridis color ramp: purple (slow) -> teal -> green -> yellow (fast)
+                { color: [68, 1, 84, 0.8], value: 0 },
+                { color: [59, 82, 139, 0.8], value: 8 },
+                { color: [33, 145, 140, 0.8], value: 16 },
+                { color: [94, 201, 98, 0.8], value: 24 },
+                { color: [253, 231, 37, 0.8], value: 32 },
+              ],
+            }],
+          },
+          effect: "bloom(.5, 0.5px, 0)", // glow effect applied to the layer
+        });
+
+        // Reuse the existing map if it exists, otherwise create a new one and assign it to the web component
+        if (currentMap) {
+          currentMap.layers.removeAll();
+          currentMap.add(windLayer);
+        } else {
+          currentMap = new Map({ basemap: "dark-gray-vector", layers: [windLayer] });
+          viewElement.map = currentMap;
+        }
+        setupWindControls(windLayer);
+      }
+
+      // --- initOceanMode ---
+      // Imports modules for ocean mode including color ramp classes.
+      // Creates two ImageryTileLayers:
+      //   1. temperatureLayer - sea surface temperature with a custom multipart color ramp (blue -> purple -> orange -> yellow)
+      //   2. currentsLayer - ocean current vectors with a flow renderer and destination-in blend mode
+      //      (destination-in masks the currents to only show where the temperature layer has pixels, i.e. ocean areas)
+      // Both layers are wrapped in a GroupLayer so the bloom effect applies to them together.
+      async function initOceanMode() {
+        const [Map, Basemap, ImageryTileLayer, TileLayer, GroupLayer, MultipartColorRamp, AlgorithmicColorRamp, Color] = await $arcgis.import([
+          "@arcgis/core/Map.js",
+          "@arcgis/core/Basemap.js",
+          "@arcgis/core/layers/ImageryTileLayer.js",
+          "@arcgis/core/layers/TileLayer.js",
+          "@arcgis/core/layers/GroupLayer.js",
+          "@arcgis/core/rest/support/MultipartColorRamp.js",
+          "@arcgis/core/rest/support/AlgorithmicColorRamp.js",
+          "@arcgis/core/Color.js",
+        ]);
+
+        // Build a multipart color ramp for sea surface temperature:
+        // cold (dark blue) -> cool (purple) -> warm (pink/orange) -> hot (yellow)
+        const colorRamp = new MultipartColorRamp({
+          colorRamps: [
+            new AlgorithmicColorRamp({ fromColor: new Color([20, 100, 150, 255]), toColor: new Color([70, 0, 150, 255]) }),
+            new AlgorithmicColorRamp({ fromColor: new Color([70, 0, 150, 255]), toColor: new Color([170, 0, 120, 255]) }),
+            new AlgorithmicColorRamp({ fromColor: new Color([170, 0, 120, 255]), toColor: new Color([230, 100, 60, 255]) }),
+            new AlgorithmicColorRamp({ fromColor: new Color([230, 100, 60, 255]), toColor: new Color([255, 170, 0, 255]) }),
+            new AlgorithmicColorRamp({ fromColor: new Color([255, 170, 0, 255]), toColor: new Color([255, 255, 0, 255]) }),
+          ],
+        });
+
+        // Temperature layer: raster-stretch renderer stretches pixel values across the full color ramp
+        const temperatureLayer = new ImageryTileLayer({
+          url: "https://tiledimageservices.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/HyCOM_Surface_Temperature___Spilhaus/ImageServer",
+          renderer: {
+            colorRamp,
+            stretchType: "min-max",
+            type: "raster-stretch",
+          },
+        });
+
+        // Currents layer: flow renderer on ocean current vectors
+        // blendMode "destination-in" makes this layer only visible where the layer below it (temperature) has content
+        // effectively clipping the flow lines to ocean areas only
+        const currentsLayer = new ImageryTileLayer({
+          url: "https://tiledimageservices.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Global_Ocean_Surface_Currents_from_Drifters__Monthly_Climatology_/ImageServer",
+          renderer: {
+            type: "flow",
+            density: 1,
+            maxPathLength: 10,
+            trailWidth: "2px",
+          },
+          blendMode: "destination-in",
+        });
+
+        // GroupLayer wraps both layers so the bloom effect applies to their combined output
+        const groupLayer = new GroupLayer({
+          effect: "bloom(2, 0.5px, 0.0)",
+          layers: [temperatureLayer, currentsLayer],
+        });
+
+        if (currentMap) {
+          currentMap.layers.removeAll();
+          currentMap.add(groupLayer);
+        } else {
+          currentMap = new Map({ basemap: "dark-gray-vector", layers: [groupLayer] });
+          viewElement.map = currentMap;
+        }
+        setupOceanControls(currentsLayer, temperatureLayer);
+      }
+
+      // --- setupWindControls ---
+      // Injects Calcite slider/checkbox controls into the controls panel for wind mode.
+      // Each slider clones the current renderer, updates the property, and reassigns it
+      // (reassigning is required to trigger a re-render in the ArcGIS SDK).
+      function setupWindControls(layer) {
+        const controlsContent = document.getElementById('controls-content');
+        controlsContent.innerHTML = `
+          <calcite-label>Trail width
+            <calcite-slider id="trailWidth" min="0.1" max="10" value="1" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Density
+            <calcite-slider id="density" min="0.1" max="3" value="0.2" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Flow speed
+            <calcite-slider id="flowSpeed" min="0.1" max="40" value="5" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Glow
+            <calcite-checkbox id="effectsEnabled" checked></calcite-checkbox>
+          </calcite-label>
+        `;
+
+        // density and flowSpeed are plain numbers so they can share a loop
+        ['density', 'flowSpeed'].forEach(prop => {
+          document.getElementById(prop).addEventListener('calciteSliderChange', (e) => {
+            let tempRenderer = layer.renderer.clone();
+            tempRenderer[prop] = e.target.value;
+            layer.renderer = tempRenderer;
+          });
+        });
+
+        // trailWidth needs a 'px' unit string, handled separately
+        document.getElementById('trailWidth').addEventListener('calciteSliderChange', (e) => {
+          let tempRenderer = layer.renderer.clone();
+          tempRenderer.trailWidth = e.target.value + 'px';
+          layer.renderer = tempRenderer;
+        });
+
+        // Bloom toggle: applies/removes the glow effect on the layer
+        document.getElementById('effectsEnabled').addEventListener('calciteCheckboxChange', (e) => {
+          layer.effect = e.target.checked ? "bloom(.5, 0.5px, 0)" : null;
+        });
+      }
+
+      // --- setupOceanControls ---
+      // Same pattern as setupWindControls but for ocean mode.
+      // Trail width and density control the currents flow layer.
+      // Temperature opacity fades the temperature raster in/out.
+      // Bloom toggle applies to the GroupLayer so both layers are affected together.
+      function setupOceanControls(currentsLayer, temperatureLayer) {
+        const controlsContent = document.getElementById('controls-content');
+        controlsContent.innerHTML = `
+          <calcite-label>Current trail width
+            <calcite-slider id="currentTrailWidth" min="0.1" max="5" value="2" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Current density
+            <calcite-slider id="currentDensity" min="0.1" max="3" value="1" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Temperature opacity
+            <calcite-slider id="tempOpacity" min="0" max="1" value="1" step="0.1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Bloom effect
+            <calcite-checkbox id="bloomEnabled" checked></calcite-checkbox>
+          </calcite-label>
+        `;
+
+        document.getElementById('currentTrailWidth').addEventListener('calciteSliderChange', (e) => {
+          let tempRenderer = currentsLayer.renderer.clone();
+          tempRenderer.trailWidth = e.target.value + 'px';
+          currentsLayer.renderer = tempRenderer;
+        });
+
+        document.getElementById('currentDensity').addEventListener('calciteSliderChange', (e) => {
+          let tempRenderer = currentsLayer.renderer.clone();
+          tempRenderer.density = e.target.value;
+          currentsLayer.renderer = tempRenderer;
+        });
+
+        document.getElementById('tempOpacity').addEventListener('calciteSliderChange', (e) => {
+          temperatureLayer.opacity = e.target.value;
+        });
+
+        // temperatureLayer.parent is the GroupLayer — bloom is applied there so both layers glow together
+        document.getElementById('bloomEnabled').addEventListener('calciteCheckboxChange', (e) => {
+          const groupLayer = temperatureLayer.parent;
+          groupLayer.effect = e.target.checked ? "bloom(2, 0.5px, 0.0)" : null;
+        });
+      }
+
+      // --- showSplash ---
+      // Returns to the splash screen, hides the map, and clears all layers.
+      // Resetting currentMode to null allows the user to re-enter the same mode fresh.
+      function showSplash() {
+        document.getElementById('splash-screen').style.display = 'flex';
+        document.getElementById('nav-bar').style.display = 'none';
+        document.getElementById('map-container').style.display = 'none';
+        if (currentMap) currentMap.layers.removeAll(); // clean up layers so old data doesn't linger
+        currentMode = null;
+      }
+
+      // Expose functions to the global scope so the HTML onclick attributes can call them
+      window.startMode = startMode;
+      window.showSplash = showSplash;
+    </script>
+  </body>
+</html>
